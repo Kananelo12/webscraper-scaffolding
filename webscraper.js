@@ -40,7 +40,9 @@ const extractAllLinks = () => {
     .map((a) => a.href)
     .filter((href) => href.startsWith("https://"));
 
-  console.log(links);
+  const uniqueSortedLinks = [...new Set(links)].sort();
+
+  console.log(uniqueSortedLinks);
 };
 
 extractAllLinks();
@@ -51,8 +53,10 @@ extractAllLinks();
 const extractAllImages = () => {
   const images = [...doc.querySelectorAll("img")].map((img) => img.src);
 
+  const uniqueSortedImages = [...new Set(images)].sort();
+
   console.log("\n------------------All Images Scraped ------------------");
-  for (let image of images) {
+  for (let image of uniqueSortedImages) {
     const absoluteUrl = new URL(image, urlParam).href;
     console.log("\nImage: ", absoluteUrl);
   }
