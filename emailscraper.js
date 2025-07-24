@@ -1,52 +1,31 @@
-import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import axios from "axios";
+import dotenv from "dotenv";
 
-puppeteer.use(StealthPlugin());
+dotenv.config();
 
-const SCRAPER_API_KEY = "c8075e4c88612cd64eede9dbf913aa9d";
-const searchQuery = "Tec";
-const targetUrl = `https://www.ibba.org/find-a-business-broker/?nameSearch=${encodeURIComponent(
-  searchQuery
-)}`;
-const scraperApiUrl = `https://api.scraperapi.com/?api_key=${SCRAPER_API_KEY}&url=${encodeURIComponent(
-  targetUrl
+const SCRAPER_API_KEY = process.env.SCRAPER_API_KEY;
+const TARGET_URL = "https://www.ibba.org/wp-json/brokers/all";
+const SCRAPER_API_URL = `http://api.scraperapi.com/?api_key=${SCRAPER_API_KEY}&url=${encodeURIComponent(
+  TARGET_URL
 )}`;
 
-const run = async () => {
-  const browser = await puppeteer.launch({
-    headless: false,
-    args: ["--start-maximized", "--no-sandbox", "--disable-setuid-sandbox"],
-  });
-
-  const page = await browser.newPage();
-
+async function scrapeBrokers() {
   try {
-    console.log("Navigating to IBBA page...");
-    await page.goto(scraperApiUrl, {
-      waitUntil: "networkidle2",
-      timeout: 90000,
-    });
+    console.log("Navigating through ScraperAPI...");
+    const response = await axios.get(SCRAPER_API_URL);
+    const brokers = response.data;
 
-    await page.waitForSelector(".brokerNameWrapper a", { timeout: 15000 });
+    const cleanedBrokerData = brokers.map((broker) => ({
+      firstname: broker.first_name || "N/A",
+      contact: broker.company || "N/A",
+      email: broker.email || "N/A",
+    }));
 
-    const brokers = await page.evaluate(() => {
-      return [...document.querySelectorAll(".brokerNameWrapper > a")].map(
-        (a) => {
-          return {
-            href: a.href,
-            text: a.textContent.trim(),
-            outerHTML: a.outerHTML,
-          };
-        }
-      );
-    });
-
-    console.log("brokers found: ", brokers);
-  } catch (err) {
-    console.error("Error during scraping:", err.message);
-  } finally {
-    await browser.close();
+    console.log(` Total brokers found: ${cleanedBrokerData.length}`);
+    console.table(cleanedBrokerData.slice(0, 10));
+  } catch (error) {
+    console.error(" Error fetching broker data:", error.message);
   }
-};
+}
 
-run();
+scrapeBrokers();
