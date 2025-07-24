@@ -1,8 +1,11 @@
 import { JSDOM } from "jsdom";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const baseUrl = "https://www.igdb.com";
 const targetUrl = "https://www.igdb.com/games/coming_soon";
-const apiKey = "0db44c577641137229b1b71190b4c880";
+const apiKey = process.env.SCRAPER_API_KEY;
 
 const apiUrl = `https://api.scraperapi.com/?api_key=${apiKey}&url=${encodeURIComponent(
   targetUrl
