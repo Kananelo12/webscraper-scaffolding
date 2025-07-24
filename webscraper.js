@@ -9,7 +9,7 @@ if (!urlParam) {
 
 const fetchPageHtml = async (pageUrl) => {
   try {
-    const response = await fetch("https://joel-portfolio.web.app/");
+    const response = await fetch(pageUrl);
     const body = await response.text();
 
     console.log(body);
@@ -20,4 +20,3 @@ const fetchPageHtml = async (pageUrl) => {
 };
 
 const doc = await fetchPageHtml(urlParam);
-console.log(doc);
