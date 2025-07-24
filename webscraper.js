@@ -1,11 +1,9 @@
 // TODO: write this file!
-// import fetch from "node-fetch";
 import { JSDOM } from "jsdom";
 
 const urlParam = process.argv[2];
-
 if (!urlParam) {
-  console.log("Expecting a page url argument");
+  console.log("Expecting a page url argument!");
   process.exit(1);
 }
 
@@ -21,10 +19,10 @@ const fetchPageHtml = async (pageUrl) => {
     const response = await fetch(pageUrl);
     const body = await response.text();
 
-    // console.log(body);
+    console.log(body);
     return new JSDOM(body).window.document;
   } catch (error) {
-    console.log("Error: ", error);
+    console.log("Error:", error);
   }
 };
 
@@ -34,28 +32,30 @@ const doc = await fetchPageHtml(urlParam);
  * This function extracts all links starting with "https://" from a document and logs
  * them to the console.
  */
-const extractAllLinks = () => {
+const extractLinks = () => {
   console.log("\n------------------ All Links Scraped ------------------");
   const links = [...doc.querySelectorAll("a")]
     .map((a) => a.href)
     .filter((href) => href.startsWith("https://"));
 
-  console.log(links);
+  const uniqueSortedLinks = [...new Set(links)].sort();
+  console.log(uniqueSortedLinks);
 };
 
-extractAllLinks();
+extractLinks();
 
 /**
  * This function scrapes all image URLs from a webpage and logs the absolute URLs.
  */
-const extractAllImages = () => {
+const extractImages = () => {
+  console.log("\n------------------ All Images Scraped ------------------");
   const images = [...doc.querySelectorAll("img")].map((img) => img.src);
 
-  console.log("\n------------------All Images Scraped ------------------");
-  for (let image of images) {
-    const absoluteUrl = new URL(image, urlParam).href;
-    console.log("\nImage: ", absoluteUrl);
+  const uniqueSortedImages = [...new Set(images)].sort();
+  for (let image of uniqueSortedImages) {
+    const absolutePath = new URL(image, urlParam).href;
+    console.log(absolutePath);
   }
 };
 
-extractAllImages();
+extractImages();
