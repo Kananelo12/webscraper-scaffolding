@@ -20,8 +20,6 @@ const fetchPageHtml = async (pageUrl) => {
   try {
     const response = await fetch(pageUrl);
     const body = await response.text();
-
-    // console.log(body);
     return new JSDOM(body).window.document;
   } catch (error) {
     console.log("Error: ", error);
