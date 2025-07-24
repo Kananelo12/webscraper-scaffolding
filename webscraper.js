@@ -1,8 +1,23 @@
 // TODO: write this file!
-// import "./fetch-polyfill.js";
-// import fetch from "node-fetch";
+import { JSDOM } from "jsdom";
 
-const response = await fetch("https://joel-portfolio.web.app/");
-const body = await response.text();
+const urlParam = process.argv[2];
+if (!urlParam) {
+  console.log("Expecting a page url argument!");
+  process.exit(1);
+}
 
-console.log(body);
+const fetchPageHtml = async (pageUrl) => {
+  try {
+    const response = await fetch("https://joel-portfolio.web.app/");
+    const body = await response.text();
+
+    console.log(body);
+    return new JSDOM(body).window.document;
+  } catch (error) {
+    console.log("Error:", error);
+  }
+};
+
+const doc = await fetchPageHtml(urlParam);
+console.log(doc);
