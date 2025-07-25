@@ -53,3 +53,7 @@ Run: ```node gameDatabase.js```
 - [JSDOM Package](https://www.npmjs.com/package/jsdom)  
 - [ScraperAPI](https://www.scraperapi.com/)  
 - [Scraping Example Blog](https://menubar.io/simple-web-scraping) (see “Scraping with Node” section)
+
+## Contributors
+- [Kananelo Joel](https://github.com/kananelo12)
+- [Poloko Nkolanyane](https://github.com/poloko-dev)
